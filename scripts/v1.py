@@ -2,47 +2,19 @@ import maya.cmds as cmds
 import math
 #Add your geometry
 #Create 5 locator and place 
-
-#get position of root
-posX_1 =cmds.getAttr('locator1.translateX')
-posY_1 =cmds.getAttr('locator1.translateY')
-posZ_1 =cmds.getAttr('locator1.translateZ')
-
-#get position of neck
-posX_2 =cmds.getAttr('locator2.translateX')
-posY_2 =cmds.getAttr('locator2.translateY')
-posZ_2 =cmds.getAttr('locator2.translateZ')
-cmds.select(d=True)
-#get position of wrist 3
-posX_3 =cmds.getAttr('locator3.translateX')
-posY_3 =cmds.getAttr('locator3.translateY')
-posZ_3 =cmds.getAttr('locator3.translateZ')
-cmds.select(d=True)
-
-#get position of wrist 4
-posX_4 =cmds.getAttr('locator4.translateX')
-posY_4 =cmds.getAttr('locator4.translateY')
-posZ_4 =cmds.getAttr('locator4.translateZ')
-cmds.select(d=True)
-
-#get position of knee 5
-posX_5 =cmds.getAttr('locator5.translateX')
-posY_5 =cmds.getAttr('locator5.translateY')
-posZ_5 =cmds.getAttr('locator5.translateZ')
-cmds.select(d=True)
-#get position of toe 6
-posX_6 =cmds.getAttr('locator6.translateX')
-posY_6 =cmds.getAttr('locator6.translateY')
-posZ_6 =cmds.getAttr('locator6.translateZ')
-cmds.select(d=True)
+# locator 1 - root, 2- neck, 3-elbow, 4- wrist, 5-knee, 6-toe
+for i in range(1,7):
+    posX_i =cmds.getAttr('locator'+str(i)+'.translateX')
+    posY_i =cmds.getAttr('locator'+str(i)+'.translateX')
+    posZ_i =cmds.getAttr('locator'+str(i)+'.translateX')
+    cmds.select(d=True)
 
 #total length between root and neck
 lengthY = posY_2-posY_1
 lengthZ = abs(posZ_1)+abs(posZ_2)
 #length between root and toe
 legY = posY_1-posY_6 
-#place spline joint 
-cmds.select(d=True)
+#place spline joint
 cmds.joint(p=(posX_1,posY_1,posZ_1), n = 'root')
 posX= 0 
 posY = posY_1 + lengthY*0.43
@@ -74,6 +46,7 @@ cmds.joint(p=(posX_5+legY*0.005,posY_5-legY*0.05,posZ_5-legY*0.03), n = 'knee_02
 cmds.joint(p=(posX_6-posX_5*0.3,posY_6+posY_5*0.17,posZ_5-legY*0.03-(posZ_6-posZ_5)/6),n='ankie_1')
 cmds.joint(p=((posX_6-posX_5*0.3+posX_6)/2,posY_6,posZ_5+posZ_6/1.9),n='ball_1')
 cmds.joint(p=(posX_6,posY_6,posZ_6),n='toe_1')
+
 
 
 
