@@ -1,6 +1,6 @@
 import maya.cmds as cmds
 import math
-#Interface
+
 cmds.window("Auto-Rig")
 cmds.showWindow()
 
@@ -12,15 +12,10 @@ cmds.showWindow()
 #Add your geometry
 #Create 5 locator and place 
 list = ['root', 'neck','elbow','wrist','knee','toe']
-cmds.group(n='Loc_master', em=True)
 for i in range (len(list)):
-    loc = cmds.spaceLocator(n='Loc_+'+list[i])
-    cmds.parent(loc, 'Loc_master')
+    cmds.spaceLocator(n='Loc_+'+list[i])
 # locator 1 - root, 2- neck, 3-elbow, 4- wrist, 5-knee, 6-toe
-posX_1 =cmds.getAttr('locator1.translateX')
-posY_1 =cmds.getAttr('locator1.translateY')
-posZ_1 =cmds.getAttr('locator1.translateZ')
-
+    
 #get position of neck
 posX_2 =cmds.getAttr('locator2.translateX')
 posY_2 =cmds.getAttr('locator2.translateY')
@@ -60,7 +55,7 @@ cmds.joint(p=(posX_1,posY_1,posZ_1),n = 'root')
 cmds.joint(p=(0,posY_1 + lengthY*0.43, posZ_1 + lengthZ*0.43),n= 'spline_1')
 cmds.joint('spline_1',e=True,zso=True, oj='xyz', sao='xup')
 cmds.joint(p=(0,posY_1 + lengthY*0.8,posZ_1 + lengthZ*0.18), n='spline_2')
-cmds.joint(e=True,zso=True, oj='xyz', sao='xup')
+cmds.joint('spline_2',e=True,zso=True, oj='xyz', sao='xup')
 cmds.joint('spline_2',p=(posX_2,posY_2,posZ_2), n= 'spline_3')
 cmds.joint(e=True,zso=True, oj='xyz', sao='xup')
 cmds.joint('spline_3',p=(posX_2,posY_2+lengthY*0.1,posZ_2+lengthY*0.05), n= 'neck_1')
