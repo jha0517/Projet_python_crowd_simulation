@@ -14,6 +14,8 @@ cmds.button(label='Delete all locators')
 
 ####################################################################################################
 #Add your geometry
+#Character name
+charName = 'men'
 #Create 5 locator and place 
 list = ['root', 'neck','elbow','wrist','knee','toe']
 def CreationLoc():
@@ -25,9 +27,10 @@ def CreationLoc():
             loc = cmds.spaceLocator(n='Loc+'+list[i])
             cmds.parent(loc, 'Loc_master')
 #def DeleteAllLocators():
-    
+
 def CreateJoints():
     cmds.select(d=True)
+    locXYZ= [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
     for i in range(len(list)):    
         locXYZ[i][0]= cmds.getAttr('Loc_'+list[i]+'.translateX')
         locXYZ[i][1]= cmds.getAttr('Loc_'+list[i]+'.translateY')
@@ -38,8 +41,6 @@ def CreateJoints():
     lengthZ = abs(locXYZ[0][2])+abs(locXYZ[1][2])
     #length between root and toe
     legY = locXYZ[0][1]-locXYZ[5][1] 
-    #Character name
-    charName = 'men'
     cmds.joint(p=(locXYZ[0][0],locXYZ[0][1],locXYZ[0][2]),n = charName + '_root'+'_Jnt_01')
     
     def PlaceJoint(OrientThisJoint,x,y,z,jointName,o):
@@ -90,3 +91,13 @@ def MirrorJoints():
     cmds.select(d=True)
 
     
+#Create directory
+listDirectory = [['_GlobalScale_','_Joints_','_IK_','_Controls_'],'_GlobalControl_','_Geo_','_BlendShapes_','_ExtraNodes_' ]
+cmds.group(em=True, n= charName+'_Main_01')
+for i in range (len(listDirectory)-1):
+    cmds.group(em=True, n= charName + listDirectory[i+1]+'01')
+    cmds.parent(charName + listDirectory[i+1]+'01',charName+'_Main_01')
+for i in range(len(listDirectory[0])):
+    cmds.group(em = True, n= charName + listDirectory[0][i]+'01')
+    cmds.parent(charName + listDirectory[0][i]+'01',charName + listDirectory[1]+'01')
+
