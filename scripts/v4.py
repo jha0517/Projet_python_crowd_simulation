@@ -10,6 +10,7 @@ import math
 
 ####################################################################################################
 #Add your geometry
+locXYZ= [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
 #Create 5 locator and place 
 list = ['root', 'neck','elbow','wrist','knee','toe']
 cmds.group(n='Loc_master', em=True)
