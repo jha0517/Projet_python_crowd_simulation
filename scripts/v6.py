@@ -10,8 +10,6 @@ cmds.button(label= 'Mirror',command='MirrorJoints()')
 cmds.button(label='Delete all locators')
 
 
-
-
 ####################################################################################################
 #Add your geometry
 #Character name
@@ -106,6 +104,22 @@ for i in range(len(listDirectory[0])):
 def IKhandleLeg():
     cmds.ikHandle(n= 'Leg_ikHandle', sj= charName+'_L_thigh_Jnt_01', ee=charName+'_L_ankie_Jnt_01')
     cmds.spaceLocator(n='poleVector_L_leg',p=(locXYZ[4][0]-legY*0.005,locXYZ[4][1]+legY*0.05,locXYZ[4][2]))
-    cmds.xform(obj, cp=1)
+    cmds.xform(centerPivots=1)
+    # aims the pole vector of 1 at 2.
     cmds.poleVectorConstraint( 'poleVector_L_leg', 'Leg_ikHandle' )
-    cmds.move(locXYZ[5][0]-locXYZ[4][0]*0.3,locXYZ[5][1]+locXYZ[4][1]*0.17,locXYZ[4][2]-legY*0.03-(locXYZ[5][2]-locXYZ[4][2])/6,'poleVector_L_leg',ws=True)
+    cmds.move(lengthY*0.75,-lengthY*0.75,'poleVector_L_leg',moveXY=True)
+    cmds.setAttr('Leg_ikHandle.twist',90)
+    cmds.ParentConstraint('controllerfoot','poleVector_L_leg')
+
+def ReverseFoot():
+    cmds.ikHandle(n= 'Foot_L_ball_ikHandle', sj = charName + '_L'+'_ankie'+'_Jnt_01', ee = charName +'_L'+ '_ball'+'_Jnt_01')
+    cmds.ikHandle(n= 'Foot_L_toe_ikHandle', sj = charName +'_L'+ '_ball'+'_Jnt_01', ee = charName +'_L'+ '_toe'+'_Jnt_01')
+    cmds.group('Foot_L_ikHandle', n= 'Foot_L_heelPeel')
+    #change pivot position
+    Xpos = cmds.getAttr('Foot_L_ball_ikHandle.translateX' )
+    Ypos = cmds.getAttr('Foot_L_ball_ikHandle.translateY' )
+    Zpos = cmds.getAttr('Foot_L_ball_ikHandle.translateZ' )
+    cmds.move(Xpos, Ypos, Zpos, 'Foot_L_heelPeel.scalePivot','Foot_L_heelPeel.rotatePivot', absolute=True)
+    cmds.group('Foot_L_ball_ikHandle','Foot_L_toe_ikHandle', n = 'Foot_L_toeTap')
+    cmds.move(Xpos, Ypos, Zpos, 'Foot_L_toeTap.scalePivot','Foot_L_toeTap.rotatePivot', absolute=True)
+    cmds.group()
