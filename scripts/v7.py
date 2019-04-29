@@ -174,7 +174,19 @@ def IKhandleAndControllerArm():
     cmds.rotate(0,0,30)
     cmds.parent('Arm_L_ikHandle','Arm_L_Crl')
     
-#def CreateCtr():
-#    cmds.CreateNURBSCircle()
+def CreateCtr(nameCtr,posX,posY,posZ,scaleX,scaleY,scaleZ):
+    cmds.CreateNURBSCircle()
+    cmds.rename('nurbsCircle1',nameCtr)
+    cmds.move(posX,posY,posZ)
+    cmds.scale(scaleX,scaleY,scaleZ)
+    cmds.makeIdentity(apply=True)
+    cmds.group(nameCtr, n= nameCtr+'_grp')
+    cmds.rotate(0,0,30)
+    cmds.parent('Arm_L_ikHandle','Arm_L_Crl')
 
+def IKhandleAndControllerSpline():
+    cmds.CreateNURBSCircle()
+    cmds.CreateNURBSCircle()
+    cmds.CreateNURBSCircle()
+    
     
