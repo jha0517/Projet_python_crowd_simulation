@@ -125,7 +125,7 @@ def ReverseFoot():
     Zpos = cmds.getAttr('Foot_L_ball_ikHandle.translateZ' )
     cmds.move(Xpos, Ypos, Zpos, 'Foot_L_heelPeel.scalePivot','Foot_L_heelPeel.rotatePivot', absolute=True)
     cmds.group('Foot_L_ball_ikHandle','Foot_L_toe_ikHandle', n = 'Foot_L_toeTap')
-    cmds.move(Xpos, Ypos, Zpos, 'Foot_L_toeTap.scalePivot','Foot_L_toeTap.rotatePivot', absol    ute=True)
+    cmds.move(Xpos, Ypos, Zpos, 'Foot_L_toeTap.scalePivot','Foot_L_toeTap.rotatePivot', absolute=True)
     cmds.group('Foot_L_ball_ikHandle','Foot_L_toeTap', n = 'Foot_L_TipToe')
     cmds.group('Foot_L_heelPeel','Foot_L_TipToe', n = 'Foot_L')
     cmds.move(Xpos, Ypos, Zpos, 'Foot_L.scalePivot','Foot_L.rotatePivot', absolute=True)
@@ -138,3 +138,4 @@ def controllerFoot():
     cmds.group('Foot_L_Crl', n= 'Foot_L_Crl_grp')
     cmds.parent('Foot_L','Foot_L_Crl')
 #    cmds.xform(centerPivots=1)
+def 
