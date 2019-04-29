@@ -138,4 +138,5 @@ def controllerFoot():
     cmds.group('Foot_L_Crl', n= 'Foot_L_Crl_grp')
     cmds.parent('Foot_L','Foot_L_Crl')
 #    cmds.xform(centerPivots=1)
-def 
+def IKhandleArm():
+    cmds.ikHandle(n= 'Arm_L_ikHandle', sj = charName + '_L'+'_shoulder'+'_Jnt_01', ee = charName + '_L'+'_wrist'+'_Jnt_01')
