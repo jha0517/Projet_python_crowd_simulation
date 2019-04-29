@@ -174,7 +174,7 @@ def IKhandleAndControllerArm():
     cmds.rotate(0,0,30)
     cmds.parent('Arm_L_ikHandle','Arm_L_Crl')
     
-def CreateCtr(nameCtr,posX,posY,posZ,scaleX,scaleY,scaleZ):
+def CreateCtr(nameCtr,ObjToParent,posX,posY,posZ,scaleX,scaleY,scaleZ,rotateX,rotateY,rotateZ):
     cmds.CreateNURBSCircle()
     cmds.rename('nurbsCircle1',nameCtr)
     cmds.move(posX,posY,posZ)
@@ -182,7 +182,7 @@ def CreateCtr(nameCtr,posX,posY,posZ,scaleX,scaleY,scaleZ):
     cmds.makeIdentity(apply=True)
     cmds.group(nameCtr, n= nameCtr+'_grp')
     cmds.rotate(0,0,30)
-    cmds.parent('Arm_L_ikHandle','Arm_L_Crl')
+    cmds.parent(ObjToParent,nameCtr)
 
 def IKhandleAndControllerSpline():
     cmds.CreateNURBSCircle()
