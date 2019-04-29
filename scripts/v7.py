@@ -11,7 +11,7 @@ cmds.button(label='Delete all locators')
 cmds.button(label= 'IKhandleLeg',command='IKhandleLeg()')
 cmds.button(label= 'ReverseFoot',command='ReverseFoot()')
 cmds.button(label= 'controllerFoot',command='controllerFoot()')
-
+cmds.button(label= 'IKhandleAndControllerArm',command='IKhandleAndControllerArm()')
 
 ####################################################################################################
 #Add your geometry
@@ -36,7 +36,7 @@ def CreateJoints():
         locXYZ[i][0]= cmds.getAttr('Loc_'+list[i]+'.translateX')
         locXYZ[i][1]= cmds.getAttr('Loc_'+list[i]+'.translateY')
         locXYZ[i][2]= cmds.getAttr('Loc_'+list[i]+'.translateZ')
-    
+
     #total length between root and neck
     lengthY = locXYZ[1][1]-locXYZ[0][1]
     lengthZ = abs(locXYZ[0][2])+abs(locXYZ[1][2])
@@ -68,7 +68,8 @@ def CreateJoints():
     PlaceJoint(charName + '_L'+'_arm'+'_Jnt_02',locXYZ[2][0]+lengthZ*0.1,locXYZ[2][1]-lengthZ*0.1,locXYZ[2][2],charName + '_L'+'_arm'+'_Jnt_03','y')
     PlaceJoint(charName + '_L'+'_arm'+'_Jnt_03',(locXYZ[2][0]+lengthZ*0.1+locXYZ[3][0])/2,(locXYZ[2][1]-lengthZ*0.1+locXYZ[3][1])/2,(locXYZ[2][2]+locXYZ[3][2])/2,charName + '_L'+'_arm'+'_Jnt_04','y')
     PlaceJoint(charName +'_L'+ '_arm'+'_Jnt_04',locXYZ[3][0],locXYZ[3][1],locXYZ[3][2],charName + '_L'+'_wrist'+'_Jnt_01','y')
-    cmds.joint(charName + '_L'+'_wrist'+'_Jnt_01', e=True,oj='none', ch=True,zso=True)
+    PlaceJoint(charName + '_L'+'_wrist'+'_Jnt_01',locXYZ[3][0],locXYZ[3][1]+lengthY*-0.20,locXYZ[3][2],charName + '_L'+'_hand'+'_Jnt_01','y')
+    cmds.joint(charName + '_L'+'_hand'+'_Jnt_01', e=True,oj='none', ch=True,zso=True)
     
     #place leg joint
     cmds.select(d=True)
@@ -127,9 +128,13 @@ def ReverseFoot():
     cmds.group('Foot_L_ball_ikHandle','Foot_L_toe_ikHandle', n = 'Foot_L_toeTap')
     cmds.move(Xpos, Ypos, Zpos, 'Foot_L_toeTap.scalePivot','Foot_L_toeTap.rotatePivot', absolute=True)
     cmds.group('Foot_L_ball_ikHandle','Foot_L_toeTap', n = 'Foot_L_TipToe')
-    cmds.group('Foot_L_heelPeel','Foot_L_TipToe', n = 'Foot_L')
+    cmds.group(n = 'Foot_L',em=True)
+    cmds.parent( 'Foot_L_heelPeel','Foot_L_TipToe', 'Foot_L', relative=True )
     cmds.move(Xpos, Ypos, Zpos, 'Foot_L.scalePivot','Foot_L.rotatePivot', absolute=True)
 def controllerFoot():
+    Xpos = cmds.getAttr('Foot_L_ball_ikHandle.translateX' )
+    Ypos = cmds.getAttr('Foot_L_ball_ikHandle.translateY' )
+    Zpos = cmds.getAttr('Foot_L_ball_ikHandle.translateZ' )
     cmds.CreateNURBSCircle()
     cmds.rename('nurbsCircle1','Foot_L_Crl')
     cmds.move(Xpos,Ypos,Zpos)
@@ -137,6 +142,39 @@ def controllerFoot():
     cmds.makeIdentity(apply=True)
     cmds.group('Foot_L_Crl', n= 'Foot_L_Crl_grp')
     cmds.parent('Foot_L','Foot_L_Crl')
+    # tip toe controller
+    cmds.CreateNURBSCircle()
+    cmds.rename('nurbsCircle1','FootTip_L_Crl')
+    cmds.move(Xpos,Ypos*30,Zpos)
+    cmds.scale(3,3,3)
+    cmds.rotate(0,90,-90)
+    cmds.move(Xpos, Ypos, Zpos, 'FootTip_L_Crl.scalePivot','FootTip_L_Crl.rotatePivot', absolute=True)
+    cmds.makeIdentity(apply=True)
+    cmds.parentConstraint('Foot_L_heelPeel','FootTip_L_Crl')
 #    cmds.xform(centerPivots=1)
-def IKhandleArm():
-    cmds.ikHandle(n= 'Arm_L_ikHandle', sj = charName + '_L'+'_shoulder'+'_Jnt_01', ee = charName + '_L'+'_wrist'+'_Jnt_01')
+def IKhandleAndControllerArm():
+#left Arm
+    cmds.ikHandle(n= 'Arm_L_ikHandle', sj = charName + '_L'+'_shoulder'+'_Jnt_02', ee = charName + '_L'+'_wrist'+'_Jnt_01')
+    cmds.CreateNURBSCircle()
+    cmds.rename('nurbsCircle1','Elbow_L_Crl')
+    cmds.move(locXYZ[2][0],locXYZ[2][1],locXYZ[2][2]*30)
+    cmds.scale(2,2,3)
+    cmds.rotate(90,0,0)
+    cmds.move(locXYZ[2][0], locXYZ[2][1],locXYZ[2][2], 'Elbow_L_Crl.scalePivot','Elbow_L_Crl.rotatePivot', absolute=True)
+    cmds.makeIdentity(apply=True)
+    cmds.xform(centerPivots=1)
+    cmds.poleVectorConstraint( 'Elbow_L_Crl', 'Arm_L_ikHandle' )
+    #left Arm controller
+    cmds.CreateNURBSCircle()
+    cmds.rename('nurbsCircle1','Arm_L_Crl')
+    cmds.move(locXYZ[3][0],locXYZ[3][1],locXYZ[3][2])
+    cmds.scale(5,5,8)
+    cmds.makeIdentity(apply=True)
+    cmds.group('Arm_L_Crl', n= 'Arm_L_Crl_grp')
+    cmds.rotate(0,0,30)
+    cmds.parent('Arm_L_ikHandle','Arm_L_Crl')
+    
+#def CreateCtr():
+#    cmds.CreateNURBSCircle()
+
+    
