@@ -1,11 +1,35 @@
 import maya.cmds as cmds
 import math
+#Interface
+cmds.window("Auto-Rig")
+cmds.showWindow()
+cmds.rowColumnLayout()
+cmds.button( label='Create locators',command='CreationLoc()')
+cmds.button(label= 'Create joints',command='CreateJoints()')
+cmds.button(label= 'Mirror',command='MirrorJoints()')
+cmds.button(label='Delete all locators')
+cmds.button(label= 'IKhandleLeg',command='IKhandleLeg()')
+cmds.button(label= 'ReverseFoot',command='ReverseFoot()')
+cmds.button(label= 'controllerFoot',command='controllerFoot()')
+cmds.button(label= 'IKhandleAndControllerArm',command='IKhandleAndControllerArm()')
 
 ####################################################################################################
 #Add your geometry
 #Character name
 charName = 'men'
 #Create 5 locator and place 
+list = ['root', 'neck','elbow','wrist','knee','toe']
+locXYZ= [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
+for i in range(len(list)):    
+    locXYZ[i][0]= cmds.getAttr('Loc_'+list[i]+'.translateX')
+    locXYZ[i][1]= cmds.getAttr('Loc_'+list[i]+'.translateY')
+    locXYZ[i][2]= cmds.getAttr('Loc_'+list[i]+'.translateZ')
+
+#total length between root and neck
+lengthY = locXYZ[1][1]-locXYZ[0][1]
+lengthZ = abs(locXYZ[0][2])+abs(locXYZ[1][2])
+#length between root and toe
+legY = locXYZ[0][1]-locXYZ[5][1] 
 
 def CreationLoc():
     if cmds.objExists('Loc_master'):
@@ -19,18 +43,7 @@ def CreationLoc():
 
 def CreateJoints():
     cmds.select(d=True)
-    list = ['root', 'neck','elbow','wrist','knee','toe']
-    locXYZ= [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
-    for i in range(len(list)):    
-        locXYZ[i][0]= cmds.getAttr('Loc_'+list[i]+'.translateX')
-        locXYZ[i][1]= cmds.getAttr('Loc_'+list[i]+'.translateY')
-        locXYZ[i][2]= cmds.getAttr('Loc_'+list[i]+'.translateZ')
 
-    #total length between root and neck
-    lengthY = locXYZ[1][1]-locXYZ[0][1]
-    lengthZ = abs(locXYZ[0][2])+abs(locXYZ[1][2])
-    #length between root and toe
-    legY = locXYZ[0][1]-locXYZ[5][1] 
     cmds.joint(p=(locXYZ[0][0],locXYZ[0][1],locXYZ[0][2]),n = charName + '_root'+'_Jnt_01')
     
     def PlaceJoint(OrientThisJoint,x,y,z,jointName,o):
@@ -121,6 +134,7 @@ def ReverseFoot():
     cmds.parent( 'Foot_L_heelPeel','Foot_L_TipToe', 'Foot_L', relative=True )
     cmds.move(Xpos, Ypos, Zpos, 'Foot_L.scalePivot','Foot_L.rotatePivot', absolute=True)
 def controllerFoot():
+    #leg
     Xpos = cmds.getAttr('Foot_L_ball_ikHandle.translateX' )
     Ypos = cmds.getAttr('Foot_L_ball_ikHandle.translateY' )
     Zpos = cmds.getAttr('Foot_L_ball_ikHandle.translateZ' )
@@ -130,23 +144,24 @@ def controllerFoot():
     cmds.scale(10,10,16)
     cmds.makeIdentity(apply=True)
     cmds.group('Foot_L_Crl', n= 'Foot_L_Crl_grp')
-    cmds.parent('Foot_L','Foot_L_Crl')
-    # tip toe controller
-    cmds.CreateNURBSCircle()
-    cmds.rename('nurbsCircle1','FootTip_L_Crl')
-    cmds.move(Xpos,Ypos*30,Zpos)
-    cmds.scale(3,3,3)
-    cmds.rotate(0,90,-90)
-    cmds.move(Xpos, Ypos, Zpos, 'FootTip_L_Crl.scalePivot','FootTip_L_Crl.rotatePivot', absolute=True)
-    cmds.makeIdentity(apply=True)
-    cmds.parentConstraint('Foot_L_heelPeel','FootTip_L_Crl')
+    cmds.parentConstraint('Foot_L_Crl','Foot_L')
+# tip toe controller
+#cmds.CreateNURBSCircle()
+#cmds.rename('nurbsCircle1','FootTip_L_Crl')
+#cmds.move(Xpos,Ypos*30,Zpos)
+#cmds.scale(3,3,3)
+#cmds.rotate(0,90,-90)
+#cmds.move(Xpos, Ypos, Zpos, 'FootTip_L_Crl.scalePivot','FootTip_L_Crl.rotatePivot', absolute=True)
+#cmds.makeIdentity(apply=True)
+#cmds.parentConstraint('FootTip_L_Crl','Foot_L_heelPeel')
+
 #    cmds.xform(centerPivots=1)
 def IKhandleAndControllerArm():
-#left Arm
+    #left Arm
     cmds.ikHandle(n= 'Arm_L_ikHandle', sj = charName + '_L'+'_shoulder'+'_Jnt_02', ee = charName + '_L'+'_wrist'+'_Jnt_01')
     cmds.CreateNURBSCircle()
     cmds.rename('nurbsCircle1','Elbow_L_Crl')
-    cmds.move(locXYZ[2][0],locXYZ[2][1],locXYZ[2][2]*30)
+    cmds.move(locXYZ[2][0],locXYZ[2][1],locXYZ[2][2]*5)
     cmds.scale(2,2,3)
     cmds.rotate(90,0,0)
     cmds.move(locXYZ[2][0], locXYZ[2][1],locXYZ[2][2], 'Elbow_L_Crl.scalePivot','Elbow_L_Crl.rotatePivot', absolute=True)
@@ -161,7 +176,8 @@ def IKhandleAndControllerArm():
     cmds.makeIdentity(apply=True)
     cmds.group('Arm_L_Crl', n= 'Arm_L_Crl_grp')
     cmds.rotate(0,0,30)
-    cmds.parent('Arm_L_ikHandle','Arm_L_Crl')
+    cmds.parentConstraint('Arm_L_Crl','Arm_L_ikHandle')
+    cmds.parent('Elbow_L_Crl','Arm_L_Crl')
 '''
     
 def CreateCtr(nameCtr,ObjToParent,posX,posY,posZ,scaleX,scaleY,scaleZ,rotateX,rotateY,rotateZ):
@@ -173,22 +189,11 @@ def CreateCtr(nameCtr,ObjToParent,posX,posY,posZ,scaleX,scaleY,scaleZ,rotateX,ro
     cmds.group(nameCtr, n= nameCtr+'_grp')
     cmds.rotate(0,0,30)
     cmds.parent(ObjToParent,nameCtr)
-'''
+
 def IKhandleAndControllerSpline():
     cmds.CreateNURBSCircle()
     cmds.CreateNURBSCircle()
     cmds.CreateNURBSCircle()
     
-#Interface
-cmds.window("Auto-Rig")
-cmds.showWindow()
-cmds.rowColumnLayout()
-cmds.button( label='Create locators',command='CreationLoc()')
-cmds.button(label= 'Create joints',command='CreateJoints()')
-cmds.button(label= 'Mirror',command='MirrorJoints()')
-cmds.button(label='Delete all locators')
-cmds.button(label= 'IKhandleLeg',command='IKhandleLeg()')
-cmds.button(label= 'ReverseFoot',command='ReverseFoot()')
-cmds.button(label= 'controllerFoot',command='controllerFoot()')
-cmds.button(label= 'IKhandleAndControllerArm',command='IKhandleAndControllerArm()')
 
+'''
