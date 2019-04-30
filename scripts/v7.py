@@ -1,24 +1,12 @@
 import maya.cmds as cmds
 import math
-#Interface
-cmds.window("Auto-Rig")
-cmds.showWindow()
-cmds.rowColumnLayout()
-cmds.button( label='Create locators',command='CreationLoc()')
-cmds.button(label= 'Create joints',command='CreateJoints()')
-cmds.button(label= 'Mirror',command='MirrorJoints()')
-cmds.button(label='Delete all locators')
-cmds.button(label= 'IKhandleLeg',command='IKhandleLeg()')
-cmds.button(label= 'ReverseFoot',command='ReverseFoot()')
-cmds.button(label= 'controllerFoot',command='controllerFoot()')
-cmds.button(label= 'IKhandleAndControllerArm',command='IKhandleAndControllerArm()')
 
 ####################################################################################################
 #Add your geometry
 #Character name
 charName = 'men'
 #Create 5 locator and place 
-list = ['root', 'neck','elbow','wrist','knee','toe']
+
 def CreationLoc():
     if cmds.objExists('Loc_master'):
         print("Exists already")
@@ -31,6 +19,7 @@ def CreationLoc():
 
 def CreateJoints():
     cmds.select(d=True)
+    list = ['root', 'neck','elbow','wrist','knee','toe']
     locXYZ= [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
     for i in range(len(list)):    
         locXYZ[i][0]= cmds.getAttr('Loc_'+list[i]+'.translateX')
@@ -173,6 +162,7 @@ def IKhandleAndControllerArm():
     cmds.group('Arm_L_Crl', n= 'Arm_L_Crl_grp')
     cmds.rotate(0,0,30)
     cmds.parent('Arm_L_ikHandle','Arm_L_Crl')
+'''
     
 def CreateCtr(nameCtr,ObjToParent,posX,posY,posZ,scaleX,scaleY,scaleZ,rotateX,rotateY,rotateZ):
     cmds.CreateNURBSCircle()
@@ -183,10 +173,22 @@ def CreateCtr(nameCtr,ObjToParent,posX,posY,posZ,scaleX,scaleY,scaleZ,rotateX,ro
     cmds.group(nameCtr, n= nameCtr+'_grp')
     cmds.rotate(0,0,30)
     cmds.parent(ObjToParent,nameCtr)
-
+'''
 def IKhandleAndControllerSpline():
     cmds.CreateNURBSCircle()
     cmds.CreateNURBSCircle()
     cmds.CreateNURBSCircle()
     
-    
+#Interface
+cmds.window("Auto-Rig")
+cmds.showWindow()
+cmds.rowColumnLayout()
+cmds.button( label='Create locators',command='CreationLoc()')
+cmds.button(label= 'Create joints',command='CreateJoints()')
+cmds.button(label= 'Mirror',command='MirrorJoints()')
+cmds.button(label='Delete all locators')
+cmds.button(label= 'IKhandleLeg',command='IKhandleLeg()')
+cmds.button(label= 'ReverseFoot',command='ReverseFoot()')
+cmds.button(label= 'controllerFoot',command='controllerFoot()')
+cmds.button(label= 'IKhandleAndControllerArm',command='IKhandleAndControllerArm()')
+
