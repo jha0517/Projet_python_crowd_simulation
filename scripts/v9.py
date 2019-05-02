@@ -6,9 +6,11 @@ charName = 'men'
 
 def CreationLoc():
     if cmds.objExists('Loc_master'):
+        print("Exists already")
     else:  
         cmds.group(n='Loc_master', em=True)
         for i in range (len(list)):
+            loc = cmds.spaceLocator(n='Loc+'+list[i])
             cmds.parent(loc, 'Loc_master')    
 def CreateJoints():
         #Create directory
