@@ -104,8 +104,7 @@ def IKhandleLeg():
     cmds.setAttr('Leg_ikHandle.twist',90)
     cmds.ParentConstraint('controllerfoot','poleVector_L_leg')
     cmds.parent( 'poleVector_L_leg', 'Leg_ikHandle', relative=True )
-
-def ReverseFoot(): 
+#def ReverseFoot(): 
     cmds.ikHandle(n= 'Foot_L_ball_ikHandle', sj = charName + '_L'+'_ankie'+'_Jnt_01', ee = charName +'_L'+ '_ball'+'_Jnt_01')
     cmds.ikHandle(n= 'Foot_L_toe_ikHandle', sj = charName +'_L'+ '_ball'+'_Jnt_01', ee = charName +'_L'+ '_toe'+'_Jnt_01')
     cmds.group('Leg_ikHandle', n= 'Foot_L_heelPeel')
@@ -210,7 +209,7 @@ cmds.button(label= 'Create joints',command='CreateJoints()')
 cmds.button(label= 'Mirror',command='MirrorJoints()')
 cmds.button(label='Delete all locators')
 cmds.button(label= 'IKhandleLeg',command='IKhandleLeg()')
-cmds.button(label= 'ReverseFoot',command='ReverseFoot()')
+#cmds.button(label= 'ReverseFoot',command='ReverseFoot()')
 cmds.button(label= 'controllerFoot',command='controllerFoot()')
 cmds.button(label= 'IKhandleAndControllerArm',command='IKhandleAndControllerArm()')
 cmds.button(label= 'IKhandleAndControllerSpline',command='IKhandleAndControllerSpline()')
