@@ -24,8 +24,9 @@ def CreateJoints():
         cmds.parent(charName + listDirectory[0][i]+'01',charName + listDirectory[1]+'01')
     cmds.select(d=True)
     list = ['root', 'neck','elbow','wrist','knee','toe']
+    global locXYZ
     locXYZ= [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
-    for i in range(len(list)):    
+    for i in range(len(list)):
         locXYZ[i][0]= cmds.getAttr('Loc_'+list[i]+'.translateX')
         print('translateX calcule done')
         locXYZ[i][1]= cmds.getAttr('Loc_'+list[i]+'.translateY')
