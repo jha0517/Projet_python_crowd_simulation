@@ -1,19 +1,23 @@
 import maya.cmds as cmds
 import math
 #Add your geometry
-#Character name
-charName = 'men'
 def CreationLoc():
     if cmds.objExists('Loc_master'):
         print("Exists already")
     else:  
         cmds.group(n='Loc_master', em=True)
+        global list
+        list = ['root', 'neck','elbow','wrist','knee','toe']
         for i in range (len(list)):
             loc = cmds.spaceLocator(n='Loc+'+list[i])
             cmds.parent(loc, 'Loc_master')    
-
+#def BindSkin():
+#    if 
 def CreateJoints():
-        #Create directory
+    charName = cmds.textFieldGrp(NameInput,q= True,text = True)
+    if charName == None:
+        print("Write your character name")
+    #Create directory
     listDirectory = [['_Joints_','_Controls_','_ikHandle_'],'_GlobalControl_','_Geo_']
     cmds.group(em=True, n= charName+'_Main_01')
     for i in range (len(listDirectory)-1):
@@ -23,7 +27,6 @@ def CreateJoints():
         cmds.group(em = True, n= charName + listDirectory[0][i]+'01')
         cmds.parent(charName + listDirectory[0][i]+'01',charName + listDirectory[1]+'01')
     cmds.select(d=True)
-    list = ['root', 'neck','elbow','wrist','knee','toe']
     global locXYZ
     locXYZ= [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
     for i in range(len(list)):
@@ -81,6 +84,7 @@ def CreateJoints():
     
 #Mirror joint
 def MirrorJoints():
+    charName = cmds.textFieldGrp(NameInput,q= True,text = True)
     cmds.mirrorJoint(charName +'_L'+ '_hip'+'_Jnt_01',mirrorYZ=True,mirrorBehavior=True,searchReplace=('_L_', '_R_') )
     cmds.joint(charName +'_R'+ '_hip_Jnt_01', e=True,oj='xyz', ch=True,zso=True, sao='xup')
     cmds.mirrorJoint(charName +'_L'+ '_shoulder'+'_Jnt_01',mirrorYZ=True,mirrorBehavior=True,searchReplace=('_L_', '_R_') )
@@ -92,6 +96,7 @@ def MirrorJoints():
 #Create IK Handle 
 #for Legs
 def Controllers():
+    charName = cmds.textFieldGrp(NameInput,q= True,text = True)
     lengthY = locXYZ[1][1]-locXYZ[0][1]
     lengthZ = abs(locXYZ[0][2])+abs(locXYZ[1][2])
     legY = locXYZ[0][1]-locXYZ[5][1] 
@@ -168,7 +173,7 @@ def Controllers():
         cmds.parent('Arm'+side[i]+'Crl_grp',charName+'_Chest_Ctrl_01')
         cmds.parent('Elbow'+side[i]+'Crl',charName+'_Chest_Ctrl_01')
     CreateCtr(charName+'_Chest_Ctrl_02','cluster_2Handle',(0,(locXYZ[0][1]+locXYZ[1][1])/2,0),(lengthY/60*20,lengthY/60*20,lengthY/60*20),(0,0,0))
-    cmds.parentConstraint(charName+'_Chest_Ctrl_01','men_neck_Jnt_00', maintainOffset=True,w=1)
+    cmds.parentConstraint(charName+'_Chest_Ctrl_01',charName+'_neck_Jnt_00', maintainOffset=True,w=1)
     cmds.parentConstraint(charName+'_Chest_Ctrl_01','cluster_3Handle', maintainOffset=True, weight=0.5)
     cmds.parentConstraint(charName+'_Chest_Ctrl_01',charName+'_Chest_Ctrl_02_grp', maintainOffset=True, weight=0.5)
     cmds.parentConstraint(charName+'_Spline_Ctrl_01',charName+'_Chest_Ctrl_02_grp', maintainOffset=True, weight=0.5)
@@ -205,22 +210,52 @@ def CreateCtr(nameCtr,ObjToParent,(posX,posY,posZ),(scaleX,scaleY,scaleZ),(rotat
     cmds.group(nameCtr, n= nameCtr+'_grp')
     cmds.rotate(rotateX,rotateY,rotateZ)
     cmds.parentConstraint(nameCtr,ObjToParent, mo=True)
+def ImportOBJ():
+    def importImage( fileName, fileType):
+       cmds.file( fileName, i=True );
+       return 1
+    cmds.fileBrowserDialog( m=0, fc=importImage, ft='OBJ', an='Import_Image', om='Import' )
+def Bind():
+    charName = cmds.textFieldGrp(NameInput,q= True,text = True)
+    cmds.select(charName+'_Joints_01',hi=True)
+    # if charName+'_Geo_01' null print 'put your model in Main>Geo group'
+    cmds.select(charName+'_Geo_01',hi=True,add= True)
+    cmds.bindSkin()
 #Interface
-cmds.window("Generator de foule")
-cmds.showWindow()
-#cmds.rowColumnLayout( numberOfColumns=2, columnAttach=(1, 'right', 0), columnWidth=[(1, 100), (2, 250)] )
-#cmds.text( label='Character Name' )
-#charName = cmds.textField()
-#cmds.setParent( '..' )
-#cmds.rowColumnLayout()
-#cmds.button( label='Import character',command='ImportCharacter()')
-#cmds.setParent( '..' )
-#cmds.setParent( '..' )
+cmds.window("Generator de foule", w= 300, h= 600)
+cmds.columnLayout(adj= True)
+imagePath = cmds.workspace(q=True, rd=True)+"/scripts/image_2.jpg"
+cmds.image(w=300,h=100,image=imagePath)
+cmds.rowLayout( numberOfColumns=3, columnWidth3=(80, 75, 150), adjustableColumn=2, columnAlign=(1, 'right'), columnAttach=[(1, 'both', 0), (2, 'both', 0), (3, 'both', 0)] )
+cmds.button( label='Import character',command= 'ImportOBJ()')
+
+NameInput = cmds.textFieldGrp(label = "Character Name",editable= True)
+cmds.setParent( '..' )
+cmds.setParent( '..' )
+cmds.setParent( '..' )
+
 cmds.frameLayout(label='Auto Rig',collapsable=True,collapse=True)
 cmds.rowColumnLayout()
-#cmds.button( label='Calcule',command='Calcule()')
-cmds.button( label='Import character')
 cmds.button( label='Create locators',command='CreationLoc()')
 cmds.button(label= 'Create joints',command='CreateJoints()')
 cmds.button(label= 'Mirror',command='MirrorJoints()')
 cmds.button(label= 'Controllers',command='Controllers()')
+cmds.button(label= 'bindSkin',command='Bind()')
+
+cmds.setParent( '..' )
+cmds.setParent( '..' )
+
+cmds.frameLayout(label='ddd',collapsable=True,collapse=True)
+cmds.rowColumnLayout()
+cmds.button( label='dd')
+cmds.setParent( '..' )
+cmds.setParent( '..' )
+cmds.frameLayout(label='ddd',collapsable=True,collapse=True)
+cmds.rowColumnLayout()
+cmds.button( label='dd')
+cmds.setParent( '..' )
+cmds.setParent( '..' )
+cmds.frameLayout(label='ddd',collapsable=True,collapse=True)
+cmds.rowColumnLayout()
+cmds.button( label='dd')
+cmds.showWindow()
